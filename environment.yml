@@ -1,0 +1,9 @@
+# This environment includes all the required packages for this repo, including building the executable.
+name: gcmsd
+channels:
+  - default
+  - conda-forge
+dependencies:
+  - python=3.12.*
+  - pypdf
+  - pyinstaller
