@@ -1,5 +1,8 @@
 # Python script for extracting Agilent GC-MSD tuning results
 
+# Executable (.exe) built using Pyinstaller
+# pyinstaller --onefile gcmsd_tuning_history.py
+
 
 import os
 from pathlib import Path
@@ -81,12 +84,12 @@ def get_tune_files():
             tune_reports = tune_reports + [report_name]
     
     return tune_reports
-        
+
 
 def create_filename():
     
     filename = f'{date.today()}_tune_report_history.csv'
-    i = 0
+    i = 1
     
     while os.path.exists(filename):
         filename = f'{date.today()}_tune_report_history_{i}.csv'
@@ -137,8 +140,8 @@ def main():
     
     # Debug: List of specific report file names
     # reports = [
-    #     'atune_240227.pdf'
-    #     ]
+        # 'atune_240227.pdf'
+        # ]
     reports = get_tune_files()
     
     # Manually define table headers since it's used multiple times
@@ -185,10 +188,8 @@ def main():
         # Write the data from each reports as new rows in the .csv file
         for row in range(len(reports)):
             print(f"Loading: {reports[row]}")
-            
             report_data = format_report_data(reports[row])
             writer.writerow(report_data)
-            
             print(f"Success: {reports[row]}")
             
     print("Completed!")
