@@ -1,5 +1,8 @@
 # Python script for extracting Agilent GC-MSD tuning results
 
+# Executable (.exe) built using Pyinstaller
+# pyinstaller --onefile gcmsd_tuning_history.py
+
 
 import os
 from pathlib import Path
@@ -79,23 +82,14 @@ def get_tune_files():
             tune_reports = tune_reports + [report_name]
         elif str(report_name[0:5]) == 'etune':
             tune_reports = tune_reports + [report_name]
-        # else:
-            # continue
     
     return tune_reports
 
 
-# def check_filename(filename):
-    
-    # file_exists = os.path.exists(filename)
-    # if file_exists is True:
-        # raise ValueError(f"{filename} already exists. Please rename or remove it from this folder before re-running this program.")
-        
-
 def create_filename():
     
     filename = f'{date.today()}_tune_report_history.csv'
-    i = 0
+    i = 1
     
     while os.path.exists(filename):
         filename = f'{date.today()}_tune_report_history_{i}.csv'
@@ -145,10 +139,10 @@ def format_report_data(report):
 def main():
     
     # Debug: List of specific report file names
-    reports = [
-        'atune_240227.pdf'
-        ]
-    # reports = get_tune_files()
+    # reports = [
+        # 'atune_240227.pdf'
+        # ]
+    reports = get_tune_files()
     
     # Manually define table headers since it's used multiple times
     mz_headers = [
@@ -179,9 +173,7 @@ def main():
         "Gain Factor",
         ]
     
-    # Check if .csv filename already exists
-    # csv_filename = f'{date.today()}_tune_report_history.csv'
-    # check_filename(csv_filename)
+    csv_filename = create_filename()
     
     # Write the columns into .csv file
     with open(
