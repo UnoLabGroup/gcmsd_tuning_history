@@ -13,7 +13,7 @@ from datetime import datetime, date
 
 def get_data_lines(line_match, text):
     
-    # This is a hacky fix, but it works for what we need at the moment...
+    # Avoids grabbing wrong lines where the first element is the same
     for i in range(len(text)):
         if line_match == text[f"{i}"][0]:
             if (line_match == 'Repeller') and (text[f"{i}"][2] == 'Amu'):
@@ -49,7 +49,7 @@ def get_report_data(report):
         'Ion'
         ]
     
-    # Split line strings into lists by spaces, put each line list into an indexed dict key
+    # Split line strings into lists by spaces, put each line list into a numbered dict key
     for line in range(len(page_text_lines)):
         line_text_list = page_text_lines[line].split()
         lines_dict.update({f"{line}": line_text_list})
@@ -89,11 +89,11 @@ def get_tune_files():
 def create_filename():
     
     filename = f'{date.today()}_tune_report_history.csv'
-    i = 1
+    copy_num = 2
     
     while os.path.exists(filename):
-        filename = f'{date.today()}_tune_report_history_{i}.csv'
-        i += 1
+        filename = f'{date.today()}_tune_report_history_{copy_num}.csv'
+        copy_num += 1
     
     return filename
 
@@ -114,7 +114,7 @@ def format_report_data(report):
     ymd_date = reformat_date(data["8"][2])
         
     # Define data for all columns
-    report_data_formatted = [
+    report_data = [
         ymd_date,
         report,
         data["0"][1],
@@ -132,6 +132,11 @@ def format_report_data(report):
         data["9"][5],
         data["7"][9]
         ]
+        
+    report_data_formatted = [None]*len(report_data)
+    
+    for i in range(len(report_data)):
+        report_data_formatted[i] = report_data[i].replace("~","")
     
     return report_data_formatted
 
