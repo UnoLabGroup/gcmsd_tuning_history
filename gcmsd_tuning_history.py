@@ -7,7 +7,7 @@
 import os
 from pathlib import Path
 from pypdf import PdfReader
-import csv
+import xlsxwriter
 from datetime import datetime, date
 
 
@@ -92,7 +92,7 @@ def create_filename():
     copy_num = 2
     
     while os.path.exists(filename):
-        filename = f'{date.today()}_tune_report_history_{copy_num}.csv'
+        filename = f'{date.today()}_tune_report_history_{copy_num}.xlsx'
         copy_num += 1
     
     return filename
@@ -178,25 +178,20 @@ def main():
         "Gain Factor",
         ]
     
-    csv_filename = create_filename()
+    xlsx_filename = create_filename()
     
-    # Write the columns into .csv file
-    with open(
-        csv_filename,
-        mode='w',
-        newline='',
-        encoding='utf-8'
-    ) as file:
-        writer = csv.writer(file)
-        writer.writerow(column_names)
-        
-        # Write the data from each reports as new rows in the .csv file
-        for row in range(len(reports)):
-            print(f"Loading: {reports[row]}")
-            report_data = format_report_data(reports[row])
-            writer.writerow(report_data)
-            print(f"Success: {reports[row]}")
+    # Write the column names and data rows to .xlsx file
+    workbook = xlsxwriter.Workbook(xlsx_filename)
+    worksheet = workbook.add_worksheet()
+    worksheet.write_row(0, 0, column_names)
+    
+    for row in range(len(reports)):
+        print(f"Loading: {reports[row]}")
+        report_data = format_report_data(reports[row])
+        worksheet.write_row(row+1, 0, report_data)
+        print(f"Success: {reports[row]}")
             
+    workbook.close()
     print("Completed!")
     
     
