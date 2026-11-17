@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from pypdf import PdfReader
 import xlsxwriter
-from datetime import datetime, date
+from datetime import date
 
 
 def get_data_lines(line_match, text):
@@ -88,7 +88,7 @@ def get_tune_files():
 
 def create_filename():
     
-    filename = f'{date.today()}_tune_report_history.csv'
+    filename = f'{date.today()}_tune_report_history.xlsx'
     copy_num = 2
     
     while os.path.exists(filename):
@@ -98,24 +98,13 @@ def create_filename():
     return filename
 
 
-def reformat_date(date_str):
-    
-    # Reformat report data from mm/dd/yy to yymmdd (matches dates in report file names)
-    date_obj = datetime.strptime(date_str, "%m/%d/%Y")
-    date_yymmdd = date_obj.strftime("%y%m%d")
-    
-    return date_yymmdd
-
-
 def format_report_data(report):
     
     data = get_report_data(report)
-    
-    ymd_date = reformat_date(data["8"][2])
         
     # Define data for all columns
     report_data = [
-        ymd_date,
+        data["8"][2],
         report,
         data["0"][1],
         *data["2"],
@@ -136,7 +125,10 @@ def format_report_data(report):
     report_data_formatted = [None]*len(report_data)
     
     for i in range(len(report_data)):
-        report_data_formatted[i] = report_data[i].replace("~","")
+        report_data_formatted[i] = report_data[i].replace("~","").replace("%","").replace(",","")
+        
+        if i > 1:
+            report_data_formatted[i] = float(report_data_formatted[i])
     
     return report_data_formatted
 
